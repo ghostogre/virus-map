@@ -6,15 +6,30 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
+    "@types/jest": "^25.2.2",
+    "@types/node": "^14.0.1",
+    "@types/react": "^16.9.35",
+    "@types/react-dom": "^16.9.8",
+    "antd": "^4.2.2",
+    "antd-mobile": "^2.3.2",
+    "axios": "^0.19.2",
+    "babel-polyfill": "^6.26.0",
+    "echarts": "^4.7.0",
+    "echarts-for-react": "^2.0.15-beta.1",
+    "http-proxy-middleware": "^1.0.3",
+    "qs": "^6.9.4",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1"
+    "react-scripts": "3.4.1",
+    "typescript": "^3.9.2"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "format": "prettier --write \"src/**/*.js\" \"src/**/*.ts\" \"src/**/*.tsx\"",
+    "commit": "git-cz"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -29,6 +44,32 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "commitizen": "^4.1.2",
+    "compression-webpack-plugin": "^4.0.0",
+    "customize-cra": "^0.9.1",
+    "cz-customizable": "^6.2.0",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.2.2",
+    "prettier": "^2.0.5",
+    "react-app-rewired": "^2.1.6"
+  },
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-customizable"
+    }
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx}": [
+      "yarn format",
+      "git add"
     ]
   }
 }
