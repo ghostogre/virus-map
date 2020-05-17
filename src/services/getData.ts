@@ -1,4 +1,5 @@
 import axios from 'axios'
+import jsonp from 'jsonp'
 const apiKey = 'cd7c2d24ca7db0d1aa2df5c04210eaaa'
 
 // 实时疫情数据接口
@@ -22,13 +23,20 @@ export function getTrend() {
 }
 
 // 获取地图json文件
+// 简数科技
 export function getChinaJson() {
-  return axios.get('https://raw.githubusercontent.com/huanent/vue-echarts-map-demo/master/map/china.json')
+  return new Promise((resolve, reject) => {
+    jsonp('https://data.jianshukeji.com/jsonp?filename=geochina/china.json', null, (err, res) => {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(res)
+      }
+    })
+  })
 }
 
 // 获取省市json文件
 export function getProvince(pinyinName) {
-  return axios.get(
-    `https://raw.githubusercontent.com/huanent/vue-echarts-map-demo/master/map/province/${pinyinName}.json`
-  )
+  return jsonp(`https://data.jianshukeji.com/jsonp?filename=geochina/${pinyinName}.json`)
 }

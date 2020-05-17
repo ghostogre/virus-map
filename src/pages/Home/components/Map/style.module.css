@@ -1,0 +1,25 @@
+.map {
+  padding-top: 10px;
+  text-align: center;
+  font-size: 13px;
+  color: gray;
+  background-color: #fff;
+}
+
+.allCountry {
+  background-color: #4169e2;
+  display: inline-block;
+  width: 30px;
+  height: 15px;
+  color: #fff;
+  font-size: 12px;
+  line-height: 15px;
+  margin-right: 3px;
+}
+
+.category {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 10px;
+  margin-bottom: 8px;
+}
