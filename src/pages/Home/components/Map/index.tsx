@@ -1,59 +1,149 @@
-import React from 'react'
-import { Select, Divider } from 'antd'
-import styles from './style.module.css'
-import dayjs from 'dayjs'
-import Category from '../Category'
-import Emap from '../Emap'
-const { Option } = Select
+import React, { Component } from 'react'
+import ReactEcharts from 'echarts-for-react/lib/core'
+import { getChinaJson, getProvince } from '../../../../services/getData'
+// 导入主模块
+import echarts from 'echarts/lib/echarts'
+// 地图
+import 'echarts/lib/chart/map'
+// 提示框
+import 'echarts/lib/component/tooltip'
+// 视觉映射
+import 'echarts/lib/component/visualMap'
+// 拼音对照
+import provinceMap from '../../../../map/pinyin-province.js'
 
-interface MapProps {
-  desc?: any
-  provinces?: string[]
-  toProvince: (province: string) => any
+interface Props {
   mapList: []
+  province?: string
 }
 
-const Map: React.FC<MapProps> = function (props) {
-  const { desc, provinces, toProvince, mapList } = props
-  return (
-    <div className={styles.map}>
-      {desc ? (
-        <>
-          <span className={styles.allCountry}>全国</span>
-          <span>
-            截至{dayjs(desc.modifyTime).format('YYYY年MM月DD日 HH:mm')}
-            (北京时间)
-          </span>
-          <span>统计</span>
-          <div className={styles.category}>
-            <Category title="确诊" count={desc.confirmedCount} addcount={desc.confirmedIncr} color="#e57471"></Category>
-            <Category title="疑似" count={desc.suspectedCount} addcount={desc.suspectedIncr} color="#dda451"></Category>
-            <Category title="重症" count={desc.seriousCount} addcount={desc.seriousIncr} color="#5d4037"></Category>
-            <Category title="死亡" count={desc.deadCount} addcount={desc.deadIncr} color="#919399"></Category>
-            <Category title="治愈" count={desc.curedCount} addcount={desc.curedIncr} color="#7ebe50"></Category>
-          </div>
-        </>
-      ) : null}
-      <Divider />
-      <div>
-        <p>各省最新疫情查询（点击选择具体省份）：</p>
-        <Select defaultValue="全国" style={{ width: '80%' }} onChange={toProvince}>
-          {provinces.map((item, index) => {
-            return (
-              <Option key={index} value={item}>
-                {item}
-              </Option>
-            )
-          })}
-        </Select>
-      </div>
-      {mapList.length > 0 ? <Emap mapList={mapList} /> : null}
-    </div>
-  )
+interface State {
+  showLoading: boolean
 }
 
-Map.defaultProps = {
-  toProvince: () => {}
+class Map extends Component<Props, State> {
+  echartRef: any = undefined
+  constructor(props: Props) {
+    super(props)
+    this.state = {
+      showLoading: true
+    }
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.province !== this.props.province) {
+      this.setState({
+        showLoading: true
+      })
+    }
+  }
+  async componentDidUpdate(prevProps, prevState) {
+    const { province } = this.props
+    const provincePinyin = provinceMap[province]
+    if (!provincePinyin) {
+      const res = await getChinaJson()
+      echarts.registerMap(province, res)
+      // 这里是更新完成之后，这时候注册Map并不会更新
+      // 只有重新调用render才会重新获取option
+    } else {
+      const res = await getProvince(provincePinyin)
+      echarts.registerMap(province, res)
+    }
+    let instance = this.echartRef.getEchartsInstance()
+    instance.setOption(this.getOption())
+  }
+  render() {
+    // const { showLoading } = this.state
+    return (
+      <ReactEcharts
+        ref={(ref) => {
+          this.echartRef = ref
+        }}
+        echarts={echarts}
+        option={this.getOption()}
+        lazyUpdate={true}
+        notMerge={true}
+        showLoading={false}
+        style={{ height: '400px' }}
+      />
+    )
+  }
+  getOption = () => {
+    const { mapList, province } = this.props
+    return {
+      tooltip: {
+        // 点击地图的气泡提示框
+        show: true,
+        formatter(params) {
+          let tip = ''
+          if (params.data) {
+            // 传入地图的数据在data里
+            tip = `${params.name}：<br>确诊：${params.data['value']}例<br>死亡：${params.data['deadCount']}例<br>治愈：${params.data['curedCount']}例`
+          }
+          return tip
+        }
+      },
+      visualMap: {
+        // 视觉映射
+        show: true,
+        type: 'piecewise', // 定义为分段型 visualMap
+        min: 0,
+        max: 5000,
+        orient: 'horizontal', // 横向排布
+        align: 'right', // label的位置
+        // 相对于容器的定位
+        left: 'center',
+        top: 0,
+        right: 0,
+        textStyle: {
+          // 图例文字样式
+          fontSize: 10
+        },
+        inRange: {
+          // 由数值小到大
+          color: ['#ffc0b1', '#ff8c71', '#ef1717', '#9c0505']
+        },
+        showLabel: true,
+        text: ['高', '低'], // 两端文字
+        padding: 5,
+        // 每个小块的大小
+        itemWidth: 10,
+        itemHeight: 10,
+        pieces: [
+          // 每一段的范围，以及每一段的文字
+          { min: 1000 },
+          { min: 500, max: 999 },
+          { min: 100, max: 499 },
+          { min: 10, max: 99 },
+          { min: 1, max: 9 }
+        ]
+      },
+      series: [
+        {
+          type: 'map',
+          left: 'center', // 对齐
+          name: '确诊人数',
+          mapType: province,
+          data: mapList,
+          label: {
+            show: false,
+            position: ['50%', '50%'],
+            fontSize: 10,
+            color: '#212121'
+          },
+          zoom: province !== '全国' ? 1.1 : 1.2,
+          roam: false, // 关闭鼠标缩放和平移
+          showLegendSymbol: false, // 显示图例的颜色标识
+          rippleEffect: {
+            // 波纹
+            show: true,
+            brushType: 'stroke',
+            scale: 2.5,
+            period: 4
+          }
+        }
+      ]
+    }
+  }
 }
 
 export default Map

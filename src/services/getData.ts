@@ -38,5 +38,13 @@ export function getChinaJson() {
 
 // 获取省市json文件
 export function getProvince(pinyinName) {
-  return jsonp(`https://data.jianshukeji.com/jsonp?filename=geochina/${pinyinName}.json`)
+  return new Promise((resolve, reject) => {
+    jsonp(`https://data.jianshukeji.com/jsonp?filename=geochina/${pinyinName}.json`, null, (err, res) => {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(res)
+      }
+    })
+  })
 }

@@ -5,7 +5,7 @@ import { getMapData } from '../../utils/getMapData'
 import styles from './style.module.css'
 import Tabs from 'antd-mobile/lib/tabs'
 import 'antd-mobile/lib/tabs/style/css'
-import Map from './components/Map'
+import Allcountry from './components/Allcountry'
 
 export interface HomeProps {}
 export interface HomeState {
@@ -131,7 +131,7 @@ class Home extends Component<HomeProps, HomeState> {
             tabBarUnderlineStyle={{ border: '1px solid #4169e2' }}
             onChange={this.switchTab}
           >
-            <Map desc={virusDesc} provinces={provinceList} toProvince={this.toProvince} mapList={mapList}></Map>
+            <Allcountry desc={virusDesc} provinces={provinceList} mapList={mapList}></Allcountry>
             <div>2</div>
             <div>3</div>
             <div>4</div>
@@ -161,7 +161,6 @@ class Home extends Component<HomeProps, HomeState> {
   getTrendList = async () => {
     const res = await getTrend()
   }
-  toProvince = (province) => {}
 }
 
 export default Home
