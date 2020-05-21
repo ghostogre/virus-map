@@ -21,5 +21,30 @@
 }
 
 .footer a{
-  color: #6C63FF;
+  color: #4169e2;
+}
+
+.mapBox {
+  padding-top: 10px;
+  text-align: center;
+  font-size: 13px;
+  color: gray;
+  background-color: #fff;
+}
+
+.messageBox {
+  width: 90%;
+  margin: 0 auto;
+  background-color: white;
+}
+
+.trendBox {
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+.rumorBox {
+  width: 90%;
+  margin: 20px auto;
+  background-color: white;
 }

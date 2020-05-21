@@ -36,9 +36,25 @@ class Map extends Component<Props, State> {
       })
     }
   }
+  async componentDidMount() {
+    // didupdate 第一次不会执行
+    const { province } = this.props
+    const res = await getChinaJson()
+    echarts.registerMap(province, res)
+    this.setState({
+      showLoading: false
+    })
+  }
   async componentDidUpdate(prevProps, prevState) {
     const { province } = this.props
+    if (province === prevProps.province) {
+      // 防止使用setState死循环
+      return
+    }
     const provincePinyin = provinceMap[province]
+    this.setState({
+      showLoading: true
+    })
     if (!provincePinyin) {
       const res = await getChinaJson()
       echarts.registerMap(province, res)
@@ -48,11 +64,14 @@ class Map extends Component<Props, State> {
       const res = await getProvince(provincePinyin)
       echarts.registerMap(province, res)
     }
+    this.setState({
+      showLoading: false
+    })
     let instance = this.echartRef.getEchartsInstance()
     instance.setOption(this.getOption())
   }
   render() {
-    // const { showLoading } = this.state
+    const { showLoading } = this.state
     return (
       <ReactEcharts
         ref={(ref) => {
@@ -62,7 +81,7 @@ class Map extends Component<Props, State> {
         option={this.getOption()}
         lazyUpdate={true}
         notMerge={true}
-        showLoading={false}
+        showLoading={showLoading}
         style={{ height: '400px' }}
       />
     )

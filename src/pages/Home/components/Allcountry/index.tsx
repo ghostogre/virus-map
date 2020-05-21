@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Select, Divider } from 'antd'
+import { Select, Divider, Table } from 'antd'
 import styles from './style.module.css'
 import dayjs from 'dayjs'
 import Category from '../Category'
@@ -35,8 +35,30 @@ const Allcountry: React.FC<MapProps> = function (props) {
     }
     setProvince(province)
   }
+  const columns = [
+    { title: '地区', dataIndex: 'name', key: 'name' },
+    { title: '确诊', dataIndex: 'confirmedCount', key: 'confirmedCount' },
+    { title: '死亡', dataIndex: 'deadCount', key: 'deadCount' },
+    { title: '治愈', dataIndex: 'curedCount', key: 'curedCount' }
+  ]
+  // 配置可展开行
+  const expandedRowRender = (row: any) => {
+    let mapList: [] = []
+    if (row.provinceName) {
+      mapList = getMapProvinceData(row.cities, row.provinceName)
+    }
+    return mapList.length > 0 ? (
+      <Table
+        columns={columns}
+        showHeader={false}
+        rowKey={(record: any) => record.name}
+        dataSource={mapList}
+        pagination={false}
+      />
+    ) : null
+  }
   return (
-    <div className={styles.map}>
+    <>
       {desc ? (
         <>
           <span className={styles.allCountry}>全国</span>
@@ -68,7 +90,15 @@ const Allcountry: React.FC<MapProps> = function (props) {
         </Select>
       </div>
       {mapList.length > 0 ? <Map mapList={chartMap} province={province} /> : null}
-    </div>
+      <Table
+        className={styles.table}
+        columns={columns}
+        dataSource={mapList}
+        pagination={false}
+        expandedRowRender={(row) => expandedRowRender(row)}
+        rowKey={(record: any) => record.name}
+      />
+    </>
   )
 }
 

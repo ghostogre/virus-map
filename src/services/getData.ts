@@ -13,7 +13,7 @@ export function getVirusDataByArea() {
 }
 
 // 获取疫情谣言接口
-export function getRumour() {
+export function getRumor() {
   return axios.get(`http://api.tianapi.com/txapi/rumour/index?key=${apiKey}`)
 }
 

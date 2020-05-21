@@ -1,20 +1,23 @@
 import React, { Component } from 'react'
 import { Button, Skeleton } from 'antd'
-import { getVirusDataOnTime, getVirusDataByArea, getRumour, getTrend } from '../../services/getData'
+import { getVirusDataOnTime, getVirusDataByArea, getRumor, getTrend } from '../../services/getData'
 import { getMapData } from '../../utils/getMapData'
 import styles from './style.module.css'
 import Tabs from 'antd-mobile/lib/tabs'
 import 'antd-mobile/lib/tabs/style/css'
 import Allcountry from './components/Allcountry'
+import MessageList from './components/MessageList'
+import Trend from './components/Trend'
+import Rumor from './components/Rumor'
 
 export interface HomeProps {}
 export interface HomeState {
   timer: any
-  newsList?: Array<any>
+  newsList?: []
   caseList?: []
   ncovcityList: []
   mapList: []
-  rumourList: []
+  rumorList: []
   dateList: []
   confirmedTrendList: []
   suspectedTrendList: []
@@ -52,7 +55,7 @@ class Home extends Component<HomeProps, HomeState> {
     newsList: [],
     ncovcityList: [],
     mapList: [],
-    rumourList: [],
+    rumorList: [],
     dateList: [],
     confirmedTrendList: [],
     suspectedTrendList: [],
@@ -105,18 +108,18 @@ class Home extends Component<HomeProps, HomeState> {
     })
     // 首个tab加载完成就可以展示了
     // 减少过长的等待
-    this.getRumourList()
+    this.getRumorList()
   }
   // 辟谣消息
-  getRumourList = async () => {
-    const res = await getRumour()
+  getRumorList = async () => {
+    const res = await getRumor()
     const { newslist } = res.data
     this.setState({
-      rumourList: newslist
+      rumorList: newslist
     })
   }
   render() {
-    const { loading, tabIndex, virusDesc, provinceList, mapList } = this.state
+    const { loading, tabIndex, virusDesc, provinceList, mapList, newsList, rumorList } = this.state
     const tabs = [{ title: '疫情地图' }, { title: '最新消息' }, { title: '辟谣消息' }, { title: '疫情趋势' }]
     return (
       <Skeleton loading={loading} active paragraph={{ rows: 50 }}>
@@ -131,10 +134,18 @@ class Home extends Component<HomeProps, HomeState> {
             tabBarUnderlineStyle={{ border: '1px solid #4169e2' }}
             onChange={this.switchTab}
           >
-            <Allcountry desc={virusDesc} provinces={provinceList} mapList={mapList}></Allcountry>
-            <div>2</div>
-            <div>3</div>
-            <div>4</div>
+            <div className={styles.mapBox}>
+              <Allcountry desc={virusDesc} provinces={provinceList} mapList={mapList}></Allcountry>
+            </div>
+            <div className={styles.messageBox}>
+              <MessageList data={newsList} />
+            </div>
+            <div className={styles.rumorBox}>
+              <Rumor data={rumorList} />
+            </div>
+            <div className={styles.trendBox}>
+              <Trend />
+            </div>
           </Tabs>
           {tabIndex === 0 ? (
             <footer className={styles.footer}>
