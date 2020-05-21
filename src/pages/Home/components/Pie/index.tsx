@@ -43,7 +43,7 @@ const getOption = (dataList: []) => {
   }
   return option
 }
-const Trend: React.FC<IProps> = ({ virusDesc }) => {
+const Pie: React.FC<IProps> = ({ virusDesc }) => {
   // console.log(virusDesc);
   const dataList = [] as any
   const confirm = {
@@ -71,4 +71,4 @@ const Trend: React.FC<IProps> = ({ virusDesc }) => {
     />
   )
 }
-export default Trend
+export default Pie

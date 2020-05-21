@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { Button, Skeleton } from 'antd'
+import { Divider, Skeleton } from 'antd'
+import dayjs from 'dayjs'
 import { getVirusDataOnTime, getVirusDataByArea, getRumor, getTrend } from '../../services/getData'
 import { getMapData } from '../../utils/getMapData'
 import styles from './style.module.css'
@@ -7,8 +8,9 @@ import Tabs from 'antd-mobile/lib/tabs'
 import 'antd-mobile/lib/tabs/style/css'
 import Allcountry from './components/Allcountry'
 import MessageList from './components/MessageList'
-import Trend from './components/Trend'
+import Pie from './components/Pie'
 import Rumor from './components/Rumor'
+import Line from './components/Line'
 
 export interface HomeProps {}
 export interface HomeState {
@@ -119,7 +121,21 @@ class Home extends Component<HomeProps, HomeState> {
     })
   }
   render() {
-    const { loading, tabIndex, virusDesc, provinceList, mapList, newsList, rumorList } = this.state
+    const {
+      loading,
+      tabIndex,
+      virusDesc,
+      provinceList,
+      mapList,
+      newsList,
+      rumorList,
+      confirmedTrendList,
+      suspectedTrendList,
+      curedTrendList,
+      deadTrendList,
+      dateList,
+      trendLoading
+    } = this.state
     const tabs = [{ title: '疫情地图' }, { title: '最新消息' }, { title: '辟谣消息' }, { title: '疫情趋势' }]
     return (
       <Skeleton loading={loading} active paragraph={{ rows: 50 }}>
@@ -144,7 +160,27 @@ class Home extends Component<HomeProps, HomeState> {
               <Rumor data={rumorList} />
             </div>
             <div className={styles.trendBox}>
-              <Trend />
+              <Skeleton loading={trendLoading} active paragraph={{ rows: 15 }}>
+                <Line
+                  dateList={dateList}
+                  firstList={confirmedTrendList}
+                  secondList={suspectedTrendList}
+                  firstColor={'#e57471'}
+                  secondColor={'#dda451'}
+                  legendData={['确诊人数', '疑似人数']}
+                />
+                <Divider />
+                <Line
+                  dateList={dateList}
+                  firstList={deadTrendList}
+                  secondList={curedTrendList}
+                  firstColor={'#919399'}
+                  secondColor={'#7ebe50'}
+                  legendData={['死亡人数', '治愈人数']}
+                />
+                <Divider />
+                <Pie virusDesc={virusDesc} />
+              </Skeleton>
             </div>
           </Tabs>
           {tabIndex === 0 ? (
@@ -170,7 +206,43 @@ class Home extends Component<HomeProps, HomeState> {
   }
   // 疫情趋势
   getTrendList = async () => {
-    const res = await getTrend()
+    const trend = await getTrend() // CORS不允许跨域，这个接口目前没有用
+    //console.log(trend);
+    const trendList = trend.data.results
+    let dateArr = [] as any
+    let confirmedArr = [] as any
+    let suspectedArr = [] as any
+    let deadArr = [] as any
+    let curedArr = [] as any
+    let datelist = [] as any
+    let confirmedList = [] as any
+    let suspectedList = [] as any
+    let deadList = [] as any
+    let curedList = [] as any
+    trendList.forEach((item: any) => {
+      dateArr.push(dayjs(item.updateTime).format('MM-DD'))
+      confirmedArr.push(item.confirmedCount)
+      suspectedArr.push(item.suspectedCount)
+      deadArr.push(item.deadCount)
+      curedArr.push(item.curedCount)
+    })
+    dateArr.reverse().forEach((item, index) => {
+      if (item !== dateArr[index + 1]) {
+        datelist.push(item)
+        confirmedList.push(confirmedArr[index])
+        suspectedList.push(suspectedArr[index])
+        deadList.push(deadArr[index])
+        curedList.push(curedArr[index])
+      }
+    })
+    this.setState({
+      dateList: datelist,
+      confirmedTrendList: confirmedList.reverse(),
+      suspectedTrendList: suspectedList.reverse(),
+      deadTrendList: deadList.reverse(),
+      curedTrendList: curedList.reverse(),
+      trendLoading: false
+    })
   }
 }
 
