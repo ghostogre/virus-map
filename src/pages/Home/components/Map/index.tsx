@@ -39,18 +39,6 @@ class Map extends Component<Props, State> {
   async componentDidMount() {
     // didupdate 第一次不会执行
     const { province } = this.props
-    const res = await getChinaJson()
-    echarts.registerMap(province, res)
-    this.setState({
-      showLoading: false
-    })
-  }
-  async componentDidUpdate(prevProps, prevState) {
-    const { province } = this.props
-    if (province === prevProps.province) {
-      // 防止使用setState死循环
-      return
-    }
     const provincePinyin = provinceMap[province]
     this.setState({
       showLoading: true
@@ -67,9 +55,33 @@ class Map extends Component<Props, State> {
     this.setState({
       showLoading: false
     })
-    let instance = this.echartRef.getEchartsInstance()
-    instance.setOption(this.getOption())
   }
+  // 设置province作为key
+  // async componentDidUpdate(prevProps, prevState) {
+  // const { province } = this.props
+  // if (province === prevProps.province) {
+  //   // 防止使用setState死循环
+  //   return
+  // }
+  // const provincePinyin = provinceMap[province]
+  // this.setState({
+  //   showLoading: true
+  // })
+  // if (!provincePinyin) {
+  //   const res = await getChinaJson()
+  //   echarts.registerMap(province, res)
+  //   // 这里是更新完成之后，这时候注册Map并不会更新
+  //   // 只有重新调用render才会重新获取option
+  // } else {
+  //   const res = await getProvince(provincePinyin)
+  //   echarts.registerMap(province, res)
+  // }
+  //   this.setState({
+  //     showLoading: false
+  //   })
+  //   let instance = this.echartRef.getEchartsInstance()
+  //   instance.setOption(this.getOption())
+  // }
   render() {
     const { showLoading } = this.state
     return (

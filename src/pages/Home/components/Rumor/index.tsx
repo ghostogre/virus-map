@@ -1,7 +1,6 @@
 import React from 'react'
 import { Card, Carousel } from 'antd'
 import styles from './style.module.css'
-const { Meta } = Card
 interface Props {
   data: []
 }
@@ -29,7 +28,13 @@ const Rumor: React.FC<Props> = (props) => {
               key={index}
               hoverable
               className={styles.card}
-              cover={<img src={item.imgsrc} style={{ borderRadius: '20px 20px 0px 0px', opacity: 0.8, height: 200 }} />}
+              cover={
+                <img
+                  src={item.imgsrc}
+                  alt=""
+                  style={{ borderRadius: '20px 20px 0px 0px', opacity: 0.8, height: 200 }}
+                />
+              }
             >
               <img src={imgUrl} alt="" className={styles.tip} />
               <div>

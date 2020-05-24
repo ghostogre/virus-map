@@ -89,7 +89,7 @@ const Allcountry: React.FC<MapProps> = function (props) {
           })}
         </Select>
       </div>
-      {mapList.length > 0 ? <Map mapList={chartMap} province={province} /> : null}
+      {mapList.length > 0 ? <Map mapList={chartMap} province={province} key={province} /> : null}
       <Table
         className={styles.table}
         columns={columns}
