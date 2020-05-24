@@ -23,9 +23,8 @@ const Rumor: React.FC<Props> = (props) => {
           imgUrl = 'https://assets.dxycdn.com/gitrepo/ncov-mobile/dist/static/badge-y-big@2x.c0fd84da.png'
         }
         return (
-          <div className={styles.cardbox}>
+          <div className={styles.cardbox} key={index}>
             <Card
-              key={index}
               hoverable
               className={styles.card}
               cover={

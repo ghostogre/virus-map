@@ -38,23 +38,24 @@ class Map extends Component<Props, State> {
   }
   async componentDidMount() {
     // didupdate 第一次不会执行
-    const { province } = this.props
-    const provincePinyin = provinceMap[province]
-    this.setState({
-      showLoading: true
-    })
-    if (!provincePinyin) {
-      const res = await getChinaJson()
-      echarts.registerMap(province, res)
-      // 这里是更新完成之后，这时候注册Map并不会更新
-      // 只有重新调用render才会重新获取option
-    } else {
-      const res = await getProvince(provincePinyin)
-      echarts.registerMap(province, res)
+    try {
+      const { province } = this.props
+      const provincePinyin = provinceMap[province]
+      if (!provincePinyin) {
+        const res = await getChinaJson()
+        echarts.registerMap(province, res)
+        // 这里是更新完成之后，这时候注册Map并不会更新
+        // 只有重新调用render才会重新获取option
+      } else {
+        const res = await getProvince(provincePinyin)
+        echarts.registerMap(province, res)
+      }
+      this.setState({
+        showLoading: false
+      })
+    } catch (error) {
+      console.log(error.message)
     }
-    this.setState({
-      showLoading: false
-    })
   }
   // 设置province作为key
   // async componentDidUpdate(prevProps, prevState) {
