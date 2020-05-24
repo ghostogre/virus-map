@@ -158,9 +158,7 @@ class Map extends Component<Props, State> {
           data: mapList,
           label: {
             show: false,
-            position: ['50%', '50%'],
-            fontSize: 10,
-            color: '#212121'
+            formatter: '' // 不显示省市区名称
           },
           zoom: province !== '全国' ? 1.1 : 1.2,
           roam: false, // 关闭鼠标缩放和平移
