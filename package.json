@@ -32,7 +32,8 @@
     "test": "react-app-rewired test",
     "eject": "react-scripts eject",
     "format": "prettier --write \"src/**/*.js\" \"src/**/*.ts\" \"src/**/*.tsx\"",
-    "commit": "git-cz"
+    "commit": "git-cz",
+    "analyze": "npm run build --report"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -58,7 +59,8 @@
     "husky": "^4.2.5",
     "lint-staged": "^10.2.2",
     "prettier": "^2.0.5",
-    "react-app-rewired": "^2.1.6"
+    "react-app-rewired": "^2.1.6",
+    "webpack-bundle-analyzer": "^3.8.0"
   },
   "config": {
     "commitizen": {
