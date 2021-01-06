@@ -12,7 +12,7 @@
     "@types/react-dom": "^16.9.8",
     "antd": "^4.2.2",
     "antd-mobile": "^2.3.2",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "babel-plugin-import": "^1.13.0",
     "babel-polyfill": "^6.26.0",
     "dayjs": "^1.8.27",
