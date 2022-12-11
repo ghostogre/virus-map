@@ -20,7 +20,7 @@
     "echarts-for-react": "^2.0.15-beta.1",
     "http-proxy-middleware": "^1.0.3",
     "jsonp": "^0.2.1",
-    "qs": "^6.9.4",
+    "qs": "^6.9.7",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
